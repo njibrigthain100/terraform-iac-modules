@@ -12,6 +12,7 @@ variable "common" {
     CostCenter       = string
     Compliance       = string
     instance-profile = string
+    
   })
 }
 
