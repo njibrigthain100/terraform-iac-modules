@@ -3,7 +3,7 @@
 #------------------------------------------------
 variable "common" {
   description = "These are the common variables used by all resources"
-  type = object({
+  type = list(object({
     Environment      = string
     Service          = string
     Owner            = string
@@ -13,7 +13,7 @@ variable "common" {
     Compliance       = string
     instance-profile = string
 
-  })
+  }))
   default = null
 }
 
@@ -22,13 +22,13 @@ variable "common" {
 #--------------------------------------------------
 variable "vpc_specific" {
   description = "vpc specific variables for each account"
-  type = object({
+  type = list(object({
     cidr_block           = string
     region_name          = string
     private_subnets_cidr = list(string)
     public_subnets_cidr  = list(string)
     private_az           = list(string)
     public_az            = list(string)
-  })
+  }))
   default = null
 }
