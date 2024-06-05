@@ -3,7 +3,7 @@
 #------------------------------------------------
 variable "common" {
   description = "These are the common variables used by all resources"
-  type = list(object({
+  type = object({
     Environment      = string
     Service          = string
     Owner            = string
@@ -13,7 +13,7 @@ variable "common" {
     Compliance       = string
     instance-profile = string
 
-  }))
+  })
   default = null
 }
 
