@@ -29,11 +29,6 @@ variable "vpc_specific" {
     public_subnets_cidr  = list(string)
     private_az           = list(string)
     public_az            = list(string)
-    vpc_id               = optional(string)
-    private_subnet_id    = optional(string)
-    public_subnet_id     = optional(string)
-    natgw_id             = optional(string)
-    igw_id               = optional(string)            
   })
   default = null
 }
