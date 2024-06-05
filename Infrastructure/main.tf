@@ -1,24 +1,11 @@
-locals {
-  # Common tags to be assigned to all resources
-  common_tags = {
-    Service      = var.Service
-    Owner        = var.Owner
-    Environment  = var.Environment
-    Tier         = var.Tier
-    Build-Method = var.Build-Method
-    CostCenter   = var.CostCenter
-    Complaince   = var.Compliance
-
-  }
-}
 ######################Creating the vpc#######################################################
 resource "aws_vpc" "customer-vpc" {
-  cidr_block           = var.cidr_block
+  cidr_block           = var.vpc_specific.cidr_block
   enable_dns_hostnames = true
 
-  tags = merge(local.common_tags,
+  tags = merge(var.common,
     {
-      "Name" = "${var.Owner}-${var.Environment}-VPC"
+      "Name" = "${var.common.Owner}-${var.common.Environment}-VPC"
     }
   )
 
@@ -27,9 +14,9 @@ resource "aws_vpc" "customer-vpc" {
 resource "aws_internet_gateway" "customer-igw" {
   vpc_id = aws_vpc.customer-vpc.id
 
-  tags = merge(local.common_tags,
+  tags = merge(var.common,
     {
-      "Name" = "${var.Owner}-${var.Environment}-igw"
+      "Name" = "${var.common.Owner}-${var.common.Environment}-igw"
     }
   )
 
@@ -37,9 +24,9 @@ resource "aws_internet_gateway" "customer-igw" {
 #######################Creating an eip for nat gateway############################################
 resource "aws_eip" "customer-eip" {
   domain = "vpc"
-  tags = merge(local.common_tags,
+  tags = merge(var.common,
     {
-      "Name" = "${var.Owner}-${var.Environment}-eip"
+      "Name" = "${var.common.Owner}-${var.common.Environment}-eip"
     }
   )
 
@@ -57,24 +44,24 @@ resource "aws_nat_gateway" "customer-nat_gw" {
     aws_eip.customer-eip
   ]
 
-  tags = merge(local.common_tags,
+  tags = merge(var.common,
     {
-      "Name" = "${var.Owner}-${var.Environment}-nat_gw"
+      "Name" = "${var.common.Owner}-${var.common.Environment}-nat_gw"
     }
   )
 }
 #####################Creating the private subnets##################################################
 resource "aws_subnet" "customer-private-subnets" {
   vpc_id            = aws_vpc.customer-vpc.id
-  availability_zone = element(var.private_az, count.index)
+  availability_zone = element(var.vpc_specific.private_az, count.index)
   # availability_zone = var.private_az[count.index]
-  count      = length(var.private_subnets_cidr)
-  cidr_block = element(var.private_subnets_cidr, count.index)
+  count      = length(var.vpc_specific.private_subnets_cidr)
+  cidr_block = element(var.vpc_specific.private_subnets_cidr, count.index)
   # cidr_block = var.private_subnets_cidr[count.index]
 
-  tags = merge(local.common_tags,
+  tags = merge(var.common,
     {
-      "Name" = "${var.Owner}-${var.Environment}-Private-Subnet-${count.index + 1}"
+      "Name" = "${var.common.Owner}-${var.common.Environment}-Private-Subnet-${count.index + 1}"
     }
   )
 
@@ -82,17 +69,17 @@ resource "aws_subnet" "customer-private-subnets" {
 ############################Creating the public subnets#############################################
 resource "aws_subnet" "customer-public-subnets" {
   vpc_id            = aws_vpc.customer-vpc.id
-  availability_zone = element(var.public_az, count.index)
+  availability_zone = element(var.vpc_specific.public_az, count.index)
   # availability_zone = var.public_az[count.index]
-  count = length(var.public_subnets_cidr)
+  count = length(var.vpc_specific.public_subnets_cidr)
   # For the cidr block or az you can also use the element function as shown below
-  cidr_block = element(var.public_subnets_cidr, count.index)
+  cidr_block = element(var.vpc_specific.public_subnets_cidr, count.index)
   #cidr_block = var.public_subnets_cidr[count.index]
   map_public_ip_on_launch = true
 
-  tags = merge(local.common_tags,
+  tags = merge(var.common,
     {
-      "Name" = "${var.Owner}-${var.Environment}-Public-Subnet-${count.index + 1}"
+      "Name" = "${var.common.Owner}-${var.common.Environment}-Public-Subnet-${count.index + 1}"
     }
   )
 
@@ -101,9 +88,9 @@ resource "aws_subnet" "customer-public-subnets" {
 resource "aws_route_table" "customer-private-rt" {
   vpc_id = aws_vpc.customer-vpc.id
 
-  tags = merge(local.common_tags,
+  tags = merge(var.common,
     {
-      "Name" = "${var.Owner}-${var.Environment}-Private-rt"
+      "Name" = "${var.common.Owner}-${var.common.Environment}-Private-rt"
     }
   )
 }
@@ -123,9 +110,9 @@ resource "aws_route" "customer-private-route" {
 resource "aws_route_table" "customer-public-rt" {
   vpc_id = aws_vpc.customer-vpc.id
 
-  tags = merge(local.common_tags,
+  tags = merge(var.common,
     {
-      "Name" = "${var.Owner}-${var.Environment}-Public-rt"
+      "Name" = "${var.common.Owner}-${var.common.Environment}-Public-rt"
     }
   )
 }
@@ -143,7 +130,7 @@ resource "aws_route" "customer-public-route" {
 }
 ###########################Creating private route table association##################################### 
 resource "aws_route_table_association" "customer-private-rt-association" {
-  count          = length(var.private_subnets_cidr)
+  count          = length(var.vpc_specific.private_subnets_cidr)
   route_table_id = aws_route_table.customer-private-rt.id
   subnet_id      = element(aws_subnet.customer-private-subnets.*.id, count.index)
 
@@ -151,7 +138,7 @@ resource "aws_route_table_association" "customer-private-rt-association" {
 
 ############################Creating public route table association####################################### 
 resource "aws_route_table_association" "customer-public-rt-association" {
-  count          = length(var.public_subnets_cidr)
+  count          = length(var.vpc_specific.public_subnets_cidr)
   route_table_id = aws_route_table.customer-public-rt.id
   subnet_id      = element(aws_subnet.customer-public-subnets.*.id, count.index)
 
