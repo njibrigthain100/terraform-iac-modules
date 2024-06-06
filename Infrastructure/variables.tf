@@ -23,10 +23,10 @@ variable "common" {
 variable "vpc_specific" {
   description = "vpc specific variables for each account"
   type = list(object({
-    cidr_block           = string
+    cidr_block           = number
     region_name          = string
-    private_subnets_cidr = list(string)
-    public_subnets_cidr  = list(string)
+    private_subnets_cidr = list(number)
+    public_subnets_cidr  = list(number)
     private_az           = list(string)
     public_az            = list(string)
   }))
