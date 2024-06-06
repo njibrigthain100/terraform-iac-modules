@@ -59,7 +59,7 @@ resource "aws_subnet" "customer-private-subnets" {
   cidr_block        = var.vpc_specific[0].private_subnets_cidr[each.key]
   tags = merge(var.common,
     {
-      "Name" = "${var.common.Owner}-${var.common.Environment}-Private-Subnet-${count.index + 1}"
+      "Name" = "${var.common.Owner}-${var.common.Environment}-Private-Subnet-${each.key}"
     }
   )
 
@@ -75,7 +75,7 @@ resource "aws_subnet" "customer-public-subnets" {
 
   tags = merge(var.common,
     {
-      "Name" = "${var.common.Owner}-${var.common.Environment}-Public-Subnet-${count.index + 1}"
+      "Name" = "${var.common.Owner}-${var.common.Environment}-Public-Subnet-${each.key}"
     }
   )
 
