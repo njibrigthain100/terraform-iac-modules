@@ -126,16 +126,16 @@ resource "aws_route" "customer-public-route" {
 }
 ###########################Creating private route table association##################################### 
 resource "aws_route_table_association" "customer-private-rt-association" {
-  count          = length(var.vpc_specific.private_subnets_cidr)
+  for_each = { for idx, subnet_id in aws_subnet.aws_subnet.customer-private-subnets : idx => subnet_id}
   route_table_id = aws_route_table.customer-private-rt.id
-  subnet_id      = element(aws_subnet.customer-private-subnets.*.id, count.index)
+  subnet_id      = each.value
 
 }
 
 ############################Creating public route table association####################################### 
 resource "aws_route_table_association" "customer-public-rt-association" {
-  count          = length(var.vpc_specific.public_subnets_cidr)
+  for_each = { for idx, subnet_id in aws_subnet.aws_subnet.customer-public-subnets : idx => subnet_id}
   route_table_id = aws_route_table.customer-public-rt.id
-  subnet_id      = element(aws_subnet.customer-public-subnets.*.id, count.index)
+  subnet_id      = each.value
 
 }
