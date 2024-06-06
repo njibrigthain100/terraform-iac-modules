@@ -52,13 +52,11 @@ resource "aws_nat_gateway" "customer-nat_gw" {
 }
 #####################Creating the private subnets##################################################
 resource "aws_subnet" "customer-private-subnets" {
-  vpc_id            = aws_vpc.customer-vpc.id
-  availability_zone = element(var.vpc_specific.private_az, count.index)
-  # availability_zone = var.private_az[count.index]
-  count      = length(var.vpc_specific.private_subnets_cidr)
-  cidr_block = element(var.vpc_specific.private_subnets_cidr, count.index)
-  # cidr_block = var.private_subnets_cidr[count.index]
-
+  vpc_id = aws_vpc.customer-vpc.id
+  # The for_each argument here allows terraform to iterate over the azs and maps them as the value and the subnets as the key
+  for_each          = { for idx, az in var.vpc_specific[0].private_az : idx => az }
+  availability_zone = each.value
+  cidr_block        = var.vpc_specific[0].private_subnets_cidr[each.key]
   tags = merge(var.common,
     {
       "Name" = "${var.common.Owner}-${var.common.Environment}-Private-Subnet-${count.index + 1}"
@@ -68,13 +66,11 @@ resource "aws_subnet" "customer-private-subnets" {
 }
 ############################Creating the public subnets#############################################
 resource "aws_subnet" "customer-public-subnets" {
-  vpc_id            = aws_vpc.customer-vpc.id
-  availability_zone = element(var.vpc_specific.public_az, count.index)
-  # availability_zone = var.public_az[count.index]
-  count = length(var.vpc_specific.public_subnets_cidr)
-  # For the cidr block or az you can also use the element function as shown below
-  cidr_block = element(var.vpc_specific.public_subnets_cidr, count.index)
-  #cidr_block = var.public_subnets_cidr[count.index]
+  vpc_id = aws_vpc.customer-vpc.id
+  # The for_each argument here allows terraform to iterate over the azs and maps them as the value and the subnets as the key  
+  for_each                = { for idx, az in var.vpc_specific[0].public_az : idx => az }
+  availability_zone       = each.value
+  cidr_block              = var.vpc_specific[0].public_subnets_cidr[each.key]
   map_public_ip_on_launch = true
 
   tags = merge(var.common,
