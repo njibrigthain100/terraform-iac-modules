@@ -33,6 +33,3 @@ variable "vpc_specific" {
   default = null
 }
 
-variable "vpc_items" {
-  
-}
