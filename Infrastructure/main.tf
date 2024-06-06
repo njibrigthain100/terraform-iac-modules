@@ -126,7 +126,7 @@ resource "aws_route" "customer-public-route" {
 }
 ###########################Creating private route table association##################################### 
 resource "aws_route_table_association" "customer-private-rt-association" {
-  for_each = { for idx, subnet_id in aws_subnet.aws_subnet.customer-private-subnets : idx => subnet_id}
+  for_each = { for idx, subnet_id in aws_subnet.customer-private-subnets : idx => subnet_id}
   route_table_id = aws_route_table.customer-private-rt.id
   subnet_id      = each.value
 
@@ -134,7 +134,7 @@ resource "aws_route_table_association" "customer-private-rt-association" {
 
 ############################Creating public route table association####################################### 
 resource "aws_route_table_association" "customer-public-rt-association" {
-  for_each = { for idx, subnet_id in aws_subnet.aws_subnet.customer-public-subnets : idx => subnet_id}
+  for_each = { for idx, subnet_id in aws_subnet.customer-public-subnets : idx => subnet_id}
   route_table_id = aws_route_table.customer-public-rt.id
   subnet_id      = each.value
 
