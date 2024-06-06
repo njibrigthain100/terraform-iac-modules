@@ -1,6 +1,6 @@
 ######################Creating the vpc#######################################################
 resource "aws_vpc" "customer-vpc" {
-  cidr_block           = var.vpc_specific.cidr_block
+  cidr_block           = var.vpc_specific[0].cidr_block
   enable_dns_hostnames = true
 
   tags = merge(var.common,
