@@ -35,7 +35,7 @@ resource "aws_eip" "customer-eip" {
 #####################Creating the nat gateway######################################################
 resource "aws_nat_gateway" "customer-nat_gw" {
   # The 0 in the below code means that we are allocating the nat gateway only to the first subnet
-  subnet_id     = element(aws_subnet.customer-public-subnets.*.id, 0)
+  subnet_id     = aws_subnet.customer-public-subnets[0].id
   allocation_id = aws_eip.customer-eip.id
   # The dependency here is important as the nat gateway is depended on the public subnet
   # And the elastic ip. So these resources have to be created first before the ngw
@@ -126,7 +126,7 @@ resource "aws_route" "customer-public-route" {
 }
 ###########################Creating private route table association##################################### 
 resource "aws_route_table_association" "customer-private-rt-association" {
-  for_each = { for idx, subnet_id in aws_subnet.customer-private-subnets : idx => subnet_id}
+  for_each       = { for idx, subnet in aws_subnet.customer-private-subnets : idx => subnet.id }
   route_table_id = aws_route_table.customer-private-rt.id
   subnet_id      = each.value
 
@@ -134,7 +134,7 @@ resource "aws_route_table_association" "customer-private-rt-association" {
 
 ############################Creating public route table association####################################### 
 resource "aws_route_table_association" "customer-public-rt-association" {
-  for_each = { for idx, subnet_id in aws_subnet.customer-public-subnets : idx => subnet_id}
+  for_each       = { for idx, subnet in aws_subnet.customer-public-subnets : idx => subnet.id }
   route_table_id = aws_route_table.customer-public-rt.id
   subnet_id      = each.value
 

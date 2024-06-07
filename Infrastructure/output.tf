@@ -3,14 +3,14 @@ output "customer-vpc-id" {
   value       = [aws_vpc.customer-vpc.id]
 }
 
-output "customer-private-subnets-id" {
-  description = "the private subnet id"
-  value       = [aws_subnet.customer-private-subnets.*.id]
-}
-
 output "customer-public-subnets-id" {
   description = "The public subnets id"
-  value       = [aws_subnet.customer-public-subnets.*.id]
+  value       = [for subnet in aws_subnet.customer-public-subnets : subnet.id]
+}
+
+output "customer-private-subnets-id" {
+  description = "The public subnets id"
+  value       = [for subnet in aws_subnet.customer-private-subnets : subnet.id]
 }
 
 output "customer-nat-gw-id" {
