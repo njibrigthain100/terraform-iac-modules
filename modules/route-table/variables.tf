@@ -19,8 +19,12 @@ variable "common" {
 variable "vpc" {
   description = "vpc specific variables for each account"
   type = object({
-    cidr_block = string 
-    vpc_id = optional(string)
+    cidr_block        = string
+    vpc_id            = optional(string)
+    gateway_id        = string
+    nat_gateway_id    = string
+    private_subnet_id = string
+    public_subnet_id  = string
   })
   default = null
 }

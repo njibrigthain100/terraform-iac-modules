@@ -27,8 +27,3 @@ resource "aws_subnet" "public_subnet" {
   )
 }
 
-# module "nat-gateway" {
-#   source = "../modules/natgw"
-
-#   common = var.common
-# }

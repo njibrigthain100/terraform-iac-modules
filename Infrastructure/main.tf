@@ -20,10 +20,26 @@ module "subnets" {
 module "natGW" {
   source = "../modules/natgw"
   vpc = {
-    subnet_id            = module.subnets.public_subnets_id[0]
+    subnet_id = module.subnets.public_subnets_id[0]
   }
-  common = var.common
-  depends_on = [ module.subnets ]
+  common     = var.common
+  depends_on = [module.subnets]
+}
+
+module "route-table" {
+  source = "../modules/route-table"
+  vpc = {
+    cidr_block = var.vpc.cidr_block
+    vpc_id     = module.vpc.vpc_id[0]
+    # The values below are those outputted from the other modules
+    gateway_id        = module.vpc.igw_id[0]
+    nat_gateway_id    = module.natGW.ngw_Id[0]
+    private_subnet_id = module.subnets.private_subnets_id[0]
+    public_subnet_id  = module.subnets.public_subnets_id[0]
+
+  }
+  common     = var.common
+  depends_on = [module.subnets]
 }
 
 
