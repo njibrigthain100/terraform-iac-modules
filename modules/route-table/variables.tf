@@ -16,7 +16,7 @@ variable "common" {
 }
 
 
-variable "vpc" {
+variable "route_table" {
   description = "vpc specific variables for each account"
   type = object({
     cidr_block        = string

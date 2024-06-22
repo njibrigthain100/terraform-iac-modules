@@ -18,7 +18,7 @@ variable "common" {
 #--------------------------------------------------
 #vpc specific variables
 #--------------------------------------------------
-variable "vpc" {
+variable "subnets" {
   description = "vpc specific variables for each account"
   type = object({
     private_subnets_cidr = list(string)

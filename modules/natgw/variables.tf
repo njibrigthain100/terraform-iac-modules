@@ -15,7 +15,7 @@ variable "common" {
   default = null
 }
 
-variable "vpc" {
+variable "natgw" {
   description = "vpc specific variables for each account"
   type = object({
     subnet_id            = optional(string)

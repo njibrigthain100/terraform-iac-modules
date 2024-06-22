@@ -8,7 +8,7 @@ module "vpc" {
 
 module "subnets" {
   source = "../modules/subnets"
-  vpc = {
+  subnets = {
     private_subnets_cidr = var.vpc.private_subnets_cidr
     public_subnets_cidr  = var.vpc.public_subnets_cidr
     az                   = var.vpc.az
@@ -19,7 +19,7 @@ module "subnets" {
 
 module "natGW" {
   source = "../modules/natgw"
-  vpc = {
+  natgw = {
     subnet_id = module.subnets.public_subnets_id[0]
   }
   common     = var.common
@@ -28,7 +28,7 @@ module "natGW" {
 
 module "route-table" {
   source = "../modules/route-table"
-  vpc = {
+  route_table = {
     cidr_block = var.vpc.cidr_block
     vpc_id     = module.vpc.vpc_id[0]
     # The values below are those outputted from the other modules
