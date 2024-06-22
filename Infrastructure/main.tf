@@ -41,6 +41,3 @@ module "route-table" {
   common     = var.common
   depends_on = [module.subnets]
 }
-
-
-
