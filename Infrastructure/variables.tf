@@ -16,17 +16,16 @@ variable "common" {
 }
 
 #--------------------------------------------------
+#--------------------------------------------------
 #vpc specific variables
 #--------------------------------------------------
-variable "vpc" {
-  description = "vpc specific variables for each account"
+variable "vpc_subnet" {
+  description = "vpc and subnet variables for each account"
   type = object({
     cidr_block           = string
     private_subnets_cidr = list(string)
     public_subnets_cidr  = list(string)
     az                   = list(string)
-    vpc_id               = optional(string)
-    subnet_id            = optional(string)
   })
   default = null
 }
